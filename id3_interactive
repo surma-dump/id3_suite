@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ ${1} == "-h" ] ; then
+	echo "Usage: id3_interactive [flags ...] <filename>"
+	id3v2 -h
+	exit
+fi
+
+eval FILE=\$$# 
+if [ ! -f "${FILE}" ] ; then
+	echo "id3_interactive: File not found"
+	exit 1
+fi
+
+while [ $# -ne 1 ] ; do
+	echo -n "${FILE}: ${1}: "
+	read VAL
+	id3v2 ${1} "${VAL}" "${FILE}"
+	shift 1
+done
+

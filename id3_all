@@ -1,0 +1,19 @@
+#!/bin/bash
+
+
+if [ "$1" == "-h" ] ; then
+	echo "id3_all [-i|-r] [add. Params]"
+	echo "  -i edit all interactive (see id3_interactive -h for help)"
+	echo "  -r rename all (see id3_rename -h for help)"
+	echo "  without: apply id3v2-operatios to all"
+	id3v2 -h
+	exit
+elif [ "$1" == "-i" ] ; then
+	shift
+	find . -iregex ".+\.mp3$" -type f -exec $(dirname ${0})/id3_interactive "$@" {} \;
+elif [ "$1" == "-r" ] ; then
+	shift
+	find . -iregex ".+\.mp3$" -type f -exec $(dirname ${0})/id3_rename "$@" {} \;
+else
+	find . -iregex ".+\.mp3$" -type f -exec id3v2 "$@" {} \;
+fi

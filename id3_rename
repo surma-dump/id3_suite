@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [ "${1}" == "-h" ] ; then
+	echo "Usage: id3_rename <layout> <filename>"
+	echo "  Layout: id3v2-flags with '@' instead of '-'"
+	exit
+fi
+
+eval FILE=\$$# 
+
+if [ ! -f "${FILE}" ] ; then
+	echo "id3_interactive: File not found"
+	exit 1
+fi
+
+ARTIST=$(id3v2 -l "${FILE}" | grep TPE1 | sed -r 's/^[^:]+:[ ]*//')
+
+TITLE=$(id3v2 -l "${FILE}" | grep TIT2 | sed -r 's/^[^:]+:[ ]*//')
+
+ALBUM=$(id3v2 -l "${FILE}" | grep TALB | sed -r 's/^[^:]+:[ ]*//')
+
+TRACK=$(id3v2 -l "${FILE}" | grep TRCK | sed -r 's/^[^:]+:[ ]*//')
+TRACK=$(printf "%02d" ${TRACK})
+
+NEWNAME=$(echo ${1}	| sed -r "s/@a/${ARTIST}/g" \
+			| sed -r "s/@A/${ALBUM}/g" \
+			| sed -r "s/@t/${TITLE}/g" \
+			| sed -r "s/@T/${TRACK}/g")
+mv "${FILE}" "$(dirname "${FILE}")/${NEWNAME}"
